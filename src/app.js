@@ -5,12 +5,12 @@ app.use(express.static('public'));
 
 var entries = [];
 
-app.route('api')
-	.get('/entries', function(req, res) {
+app.route('/api/entries')
+	.get(function(req, res) {
 		res.json(entries);
 	})
-	.post('/entries', function(req, res) {
-		res.status(201);
+	.post(function(req, res) {
+		res.sendStatus(201);
 	});
 
 app.listen(8000, function() {
