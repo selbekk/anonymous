@@ -6,7 +6,16 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     del = require('del'),
     jshint = require('gulp-jshint'),
-    uglify = require('gulp-uglify');
+    uglify = require('gulp-uglify'),
+    browserify = require('browserify'),
+    transform = require('vinyl-transform');
+
+var getBundleName = function () {
+    var version = require('./package.json').version;
+    var name = require('./package.json').name;
+    return version + '.' + name + '.' + 'min';
+};
+
 
 // Clean build
 gulp.task('clean', function (cb) {
@@ -15,9 +24,16 @@ gulp.task('clean', function (cb) {
 
 // Handle frontend JS build
 gulp.task('script', function () {
-    return gulp.src('src/public/js/*.js')
+    // transform regular node stream to gulp (buffered vinyl) stream
+    var browserified = transform(function(filename) {
+        var b = browserify(filename);
+        return b.bundle();
+    });
+
+    return gulp.src('src/public/js/**/*.js')
         .pipe(plumber())
         .pipe(jshint())
+        .pipe(browserified)
         .pipe(uglify())
         .pipe(concat('scripts.min.js'))
         .pipe(gulp.dest('src/public/assets/'));
