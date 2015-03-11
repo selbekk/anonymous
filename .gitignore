@@ -3,3 +3,4 @@ bower_components
 src/public/assets
 
 .idea
+*.log
