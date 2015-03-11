@@ -10,13 +10,6 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     transform = require('vinyl-transform');
 
-var getBundleName = function () {
-    var version = require('./package.json').version;
-    var name = require('./package.json').name;
-    return version + '.' + name + '.' + 'min';
-};
-
-
 // Clean build
 gulp.task('clean', function (cb) {
     del(['src/public/assets/*'], cb);
@@ -24,6 +17,7 @@ gulp.task('clean', function (cb) {
 
 // Handle frontend JS build
 gulp.task('script', function () {
+    console.log('regenerating scripts.min.js');
     // transform regular node stream to gulp (buffered vinyl) stream
     var browserified = transform(function(filename) {
         var b = browserify(filename);
@@ -42,6 +36,8 @@ gulp.task('script', function () {
 
 // Handle CSS build
 gulp.task('style', function () {
+    console.log('regenerating styles.min.js');
+
     return gulp.src('src/public/css/*.css')
         .pipe(plumber())
         .pipe(cssPrefixed({browsers: ['last 2 versions'], cascade: false}))
@@ -51,9 +47,20 @@ gulp.task('style', function () {
 });
 
 // Wire in dependencies
-gulp.task('bower:wire', function (cb) {
-    wiredep({src: './src/public/*.html', dest: './src/public/*.html'}, cb);
+gulp.task('bower', function () {
+    console.log('wiring up dependencies');
+
+    wiredep({src: './src/public/*.html', dest: './src/public/*.html'});
+});
+
+// Re-run frontend build on change
+gulp.task('watch', function() {
+    gulp.watch('./src/public/**.html', ['bower']);
+    gulp.watch('./src/public/js/**.js', ['script']);
+    gulp.watch('./src/public/css/**.js', ['style']);
+
+    console.log("watching for changes in src/public...");
 });
 
 // Combo tasks!
-gulp.task('default', ['clean', 'script', 'style', 'bower:wire']);
+gulp.task('default', ['clean', 'script', 'style', 'bower', 'watch']);
