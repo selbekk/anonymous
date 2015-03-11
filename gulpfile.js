@@ -8,7 +8,10 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     browserify = require('browserify'),
-    transform = require('vinyl-transform');
+    transform = require('vinyl-transform'),
+    handlebars = require('gulp-handlebars'),
+    wrap = require('gulp-wrap'),
+    declare = require('gulp-declare');
 
 // Clean build
 gulp.task('clean', function (cb) {
@@ -32,6 +35,20 @@ gulp.task('script', function () {
         .pipe(concat('scripts.min.js'))
         .pipe(gulp.dest('src/public/assets/'));
 
+});
+
+// Handle frontend templates
+gulp.task('template', function() {
+   console.log('compiling templates...');
+    gulp.src('src/public/templates/*.hbs')
+        .pipe(handlebars())
+        .pipe(wrap('Handlebars.template(<%= contents %>)'))
+        .pipe(declare({
+            namespace: 'Anonymous.templates',
+            noRedeclare: true // Avoid duplicate declarations
+        }))
+        .pipe(concat('templates.js'))
+        .pipe(gulp.dest('src/public/assets'));
 });
 
 // Handle CSS build
@@ -58,9 +75,10 @@ gulp.task('watch', function() {
     gulp.watch('./src/public/**.html', ['bower']);
     gulp.watch('./src/public/js/**.js', ['script']);
     gulp.watch('./src/public/css/**.js', ['style']);
+    gulp.watch('./src/public/templates/**.hbs', ['template']);
 
     console.log("watching for changes in src/public...");
 });
 
 // Combo tasks!
-gulp.task('default', ['clean', 'script', 'style', 'bower', 'watch']);
+gulp.task('default', ['clean', 'script', 'template', 'style', 'bower', 'watch']);
