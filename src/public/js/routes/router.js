@@ -13,8 +13,8 @@ module.exports = Backbone.Router.extend({
         'read': 'read'
     },
     frontpage: function() {
-        this.entries.fetch();
         this.container.childView = new EntriesView({collection: this.entries});
+        this.entries.fetch();
         this.container.render();
     },
     write: function() {

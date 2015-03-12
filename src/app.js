@@ -9,7 +9,18 @@ app.use(express.static('public'));
 app.use('/bower_components',  express.static('./../bower_components'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-var entries = [];
+var entries = [
+    {
+        id: 1,
+        title: 'my title',
+        body: 'my body'
+    },
+    {
+        id: 2,
+        title: 'my second title',
+        body: 'my second body'
+    }
+];
 
 app.route('/api/entries')
 	.get(function(req, res) {
