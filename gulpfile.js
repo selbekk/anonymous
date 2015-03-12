@@ -73,9 +73,9 @@ gulp.task('bower', function () {
 // Re-run frontend build on change
 gulp.task('watch', function() {
     gulp.watch('./src/public/**.html', ['bower']);
-    gulp.watch('./src/public/js/**.js', ['script']);
-    gulp.watch('./src/public/css/**.js', ['style']);
-    gulp.watch('./src/public/templates/**.hbs', ['template']);
+    gulp.watch('./src/public/js/**/*.js', ['script']);
+    gulp.watch('./src/public/css/**/*.css', ['style']);
+    gulp.watch('./src/public/templates/**/*.hbs', ['template']);
 
     console.log("watching for changes in src/public...");
 });
