@@ -1,8 +1,10 @@
 var express = require('express'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    morgan = require('morgan');
 
 var app = express();
 
+app.use(morgan('tiny'));
 app.use(express.static('public'));
 app.use('/bower_components',  express.static('./../bower_components'));
 app.use(bodyParser.urlencoded({ extended: false }));
